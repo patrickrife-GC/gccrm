@@ -114,7 +114,11 @@ export default function Import() {
     const reader = new FileReader();
     reader.onload = (e) => {
       const text = e.target?.result as string;
-      setParsed(parseCSV(text));
+      const results = parseCSV(text);
+      setParsed(results);
+      if (text.trim() && results.length === 0) {
+        toast.error("No contacts found. Check that your CSV has columns like First Name, Last Name, Company, etc.");
+      }
     };
     reader.readAsText(file);
   }, []);
