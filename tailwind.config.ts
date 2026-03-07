@@ -13,7 +13,17 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ["IBM Plex Sans", "system-ui", "sans-serif"],
+        mono: ["IBM Plex Mono", "monospace"],
+      },
       colors: {
+        stat: {
+          founders: "hsl(var(--stat-founders))",
+          investors: "hsl(var(--stat-investors))",
+          recent: "hsl(var(--stat-recent))",
+          total: "hsl(var(--stat-total))",
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
