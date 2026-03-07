@@ -71,14 +71,14 @@ function parseCSV(text: string): ParsedContact[] {
   if (lines.length < 2) return [];
   const headers = parseCSVLine(lines[0]).map((h) => h.toLowerCase().trim());
 
-  const idx = (name: string) => headers.findIndex((h) => h.includes(name));
-  const iFirst = idx("first name");
-  const iLast = idx("last name");
+  const idx = (...names: string[]) => headers.findIndex((h) => names.some((n) => h.includes(n)));
+  const iFirst = idx("first name", "firstname", "first");
+  const iLast = idx("last name", "lastname", "last");
   const iEmail = idx("email");
-  const iCompany = idx("company");
-  const iPosition = idx("position");
-  const iConnected = idx("connected on");
-  const iUrl = idx("url");
+  const iCompany = idx("company", "organization");
+  const iPosition = idx("position", "title", "job title", "role");
+  const iConnected = idx("connected on", "connected", "date");
+  const iUrl = idx("url", "profile", "linkedin");
 
   return lines.slice(1).map((line) => {
     const cols = parseCSVLine(line);
