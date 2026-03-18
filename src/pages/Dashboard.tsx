@@ -26,13 +26,16 @@ function NextActionBadge({ date }: { date: string | null }) {
 export default function Dashboard() {
   const { data: contacts, isLoading } = useContacts();
   const updateContact = useUpdateContact();
+  const bulkUpdate = useBulkUpdateContacts();
+  const hasSeededRef = useRef(false);
 
   const today = new Date();
+  const todayStr = format(today, "yyyy-MM-dd");
   const ninetyDaysAgo = subDays(today, 90);
 
   const handleMarkContacted = (id: string, followUpDays: number) => {
     updateContact.mutate(
-      { id, last_contacted: format(today, "yyyy-MM-dd"), next_action_date: format(addDays(today, followUpDays), "yyyy-MM-dd") },
+      { id, last_contacted: format(today, "yyyy-MM-dd"), next_action_date: format(addDays(today, followUpDays), "yyyy-MM-dd"), featured_today: false },
       { onSuccess: () => toast({ title: `Marked as contacted — follow up in ${followUpDays} days` }) }
     );
   };
@@ -40,41 +43,58 @@ export default function Dashboard() {
   const handleSkip = (id: string) => {
     const skipDate = format(addDays(today, 7), "yyyy-MM-dd");
     updateContact.mutate(
-      { id, skip_until: skipDate },
+      { id, skip_until: skipDate, featured_today: false },
       { onSuccess: () => toast({ title: "Skipped for 7 days" }) }
     );
   };
 
-  const todaysFive = useMemo(() => {
+  // Compute candidate ranking for seeding
+  const rankedCandidates = useMemo(() => {
     if (!contacts) return [];
-    const todayStr = format(today, "yyyy-MM-dd");
     return contacts
       .filter((c) => !isSkipped(c.skip_until))
       .sort((a, b) => {
-        // Founders first
         const aFounder = a.industry_cluster?.toLowerCase() === "founder" ? 0 : 1;
         const bFounder = b.industry_cluster?.toLowerCase() === "founder" ? 0 : 1;
         if (aFounder !== bFounder) return aFounder - bFounder;
-        // Actionable (null or <= today) first
         const aActionable = !a.next_action_date || a.next_action_date <= todayStr ? 0 : 1;
         const bActionable = !b.next_action_date || b.next_action_date <= todayStr ? 0 : 1;
         if (aActionable !== bActionable) return aActionable - bActionable;
-        // No last_contacted first
         const aHas = a.last_contacted ? 1 : 0;
         const bHas = b.last_contacted ? 1 : 0;
         if (aHas !== bHas) return aHas - bHas;
-        // Oldest last_contacted first
         if (a.last_contacted && b.last_contacted) {
           const diff = parseISO(a.last_contacted).getTime() - parseISO(b.last_contacted).getTime();
           if (diff !== 0) return diff;
         }
-        // Most recently connected first
         if (!a.connected_on) return 1;
         if (!b.connected_on) return -1;
         return parseISO(b.connected_on).getTime() - parseISO(a.connected_on).getTime();
-      })
-      .slice(0, 5);
-  }, [contacts]);
+      });
+  }, [contacts, todayStr]);
+
+  // Seed today's 5 if not already set for today
+  useEffect(() => {
+    if (!contacts || hasSeededRef.current || bulkUpdate.isPending) return;
+    const alreadyFeatured = contacts.filter(c => c.featured_today && c.featured_date === todayStr);
+    if (alreadyFeatured.length > 0) {
+      hasSeededRef.current = true;
+      return;
+    }
+    // Need to seed
+    const ids = rankedCandidates.slice(0, 5).map(c => c.id);
+    if (ids.length === 0) {
+      hasSeededRef.current = true;
+      return;
+    }
+    hasSeededRef.current = true;
+    bulkUpdate.mutate({ clearOld: true, featuredIds: ids, date: todayStr });
+  }, [contacts, todayStr, rankedCandidates, bulkUpdate]);
+
+  const todaysFive = useMemo(() => {
+    if (!contacts) return [];
+    return contacts.filter(c => c.featured_today && c.featured_date === todayStr);
+  }, [contacts, todayStr]);
   const total = contacts?.length ?? 0;
   const founders = contacts?.filter((c) =>
     c.title?.toLowerCase().includes("founder") ||
