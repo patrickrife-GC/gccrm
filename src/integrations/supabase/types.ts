@@ -24,6 +24,7 @@ export type Database = {
           featured_today: boolean
           first_name: string | null
           full_name: string | null
+          gc_outreach_type: string | null
           id: string
           industry_cluster: string | null
           influence_score: number | null
@@ -34,7 +35,6 @@ export type Database = {
           notes: string | null
           outreach_angle: string | null
           outreach_intent: string[] | null
-          service_type: string | null
           skip_until: string | null
           suggested_message: string | null
           suggested_outreach_type: string | null
@@ -50,6 +50,7 @@ export type Database = {
           featured_today?: boolean
           first_name?: string | null
           full_name?: string | null
+          gc_outreach_type?: string | null
           id?: string
           industry_cluster?: string | null
           influence_score?: number | null
@@ -60,7 +61,6 @@ export type Database = {
           notes?: string | null
           outreach_angle?: string | null
           outreach_intent?: string[] | null
-          service_type?: string | null
           skip_until?: string | null
           suggested_message?: string | null
           suggested_outreach_type?: string | null
@@ -76,6 +76,7 @@ export type Database = {
           featured_today?: boolean
           first_name?: string | null
           full_name?: string | null
+          gc_outreach_type?: string | null
           id?: string
           industry_cluster?: string | null
           influence_score?: number | null
@@ -86,7 +87,6 @@ export type Database = {
           notes?: string | null
           outreach_angle?: string | null
           outreach_intent?: string[] | null
-          service_type?: string | null
           skip_until?: string | null
           suggested_message?: string | null
           suggested_outreach_type?: string | null
