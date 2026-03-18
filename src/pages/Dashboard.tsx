@@ -1,33 +1,21 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { Users, Rocket, TrendingUp, Clock, ExternalLink, X } from "lucide-react";
 import { useContacts, useUpdateContact } from "@/hooks/useContacts";
 import { StatCard } from "@/components/StatCard";
 import { AppLayout } from "@/components/AppLayout";
-import { format, subDays, isAfter, isBefore, parseISO } from "date-fns";
+import { format, subDays, addDays, isAfter, isBefore, parseISO } from "date-fns";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 
-const getTodayKey = () => format(new Date(), "yyyy-MM-dd");
-
-function getSkippedIds(): string[] {
-  try {
-    const stored = localStorage.getItem("todays5_skipped");
-    if (!stored) return [];
-    const parsed = JSON.parse(stored);
-    if (parsed.date !== getTodayKey()) return [];
-    return parsed.ids ?? [];
-  } catch { return []; }
-}
-
-function setSkippedIds(ids: string[]) {
-  localStorage.setItem("todays5_skipped", JSON.stringify({ date: getTodayKey(), ids }));
-}
+const isSkipped = (skipUntil: string | null) => {
+  if (!skipUntil) return false;
+  return isAfter(parseISO(skipUntil), new Date());
+};
 
 export default function Dashboard() {
   const { data: contacts, isLoading } = useContacts();
   const updateContact = useUpdateContact();
-  const [skippedIds, setSkippedIdsState] = useState<string[]>(getSkippedIds);
 
   const today = new Date();
   const ninetyDaysAgo = subDays(today, 90);
@@ -40,36 +28,34 @@ export default function Dashboard() {
   };
 
   const handleSkip = (id: string) => {
-    const next = [...skippedIds, id];
-    setSkippedIdsState(next);
-    setSkippedIds(next);
+    const skipDate = format(addDays(today, 7), "yyyy-MM-dd");
+    updateContact.mutate(
+      { id, skip_until: skipDate },
+      { onSuccess: () => toast({ title: "Skipped for 7 days" }) }
+    );
   };
 
   const todaysFive = useMemo(() => {
     if (!contacts) return [];
     return contacts
-      .filter((c) => !skippedIds.includes(c.id))
+      .filter((c) => !isSkipped(c.skip_until))
       .sort((a, b) => {
-        // Founders first
         const aFounder = a.industry_cluster?.toLowerCase() === "founder" ? 0 : 1;
         const bFounder = b.industry_cluster?.toLowerCase() === "founder" ? 0 : 1;
         if (aFounder !== bFounder) return aFounder - bFounder;
-        // No last_contacted first
         const aHas = a.last_contacted ? 1 : 0;
         const bHas = b.last_contacted ? 1 : 0;
         if (aHas !== bHas) return aHas - bHas;
-        // Oldest last_contacted first
         if (a.last_contacted && b.last_contacted) {
           const diff = parseISO(a.last_contacted).getTime() - parseISO(b.last_contacted).getTime();
           if (diff !== 0) return diff;
         }
-        // Most recently connected first
         if (!a.connected_on) return 1;
         if (!b.connected_on) return -1;
         return parseISO(b.connected_on).getTime() - parseISO(a.connected_on).getTime();
       })
       .slice(0, 5);
-  }, [contacts, skippedIds]);
+  }, [contacts]);
   const total = contacts?.length ?? 0;
   const founders = contacts?.filter((c) =>
     c.title?.toLowerCase().includes("founder") ||
@@ -90,6 +76,7 @@ export default function Dashboard() {
 
   const reconnectRadar = contacts
     ?.filter((c) => {
+      if (isSkipped(c.skip_until)) return false;
       if (c.industry_cluster?.toLowerCase() !== "founder") return false;
       if (!c.last_contacted) return true;
       return isBefore(parseISO(c.last_contacted), ninetyDaysAgo);

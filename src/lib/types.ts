@@ -12,6 +12,7 @@ export interface Contact {
   influence_score: number | null;
   notes: string | null;
   last_contacted: string | null;
+  skip_until: string | null;
   created_at: string;
   updated_at: string;
 }
