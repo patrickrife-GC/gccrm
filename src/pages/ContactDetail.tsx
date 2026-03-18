@@ -20,11 +20,13 @@ export default function ContactDetail() {
   const updateContact = useUpdateContact();
   const [notes, setNotes] = useState("");
   const [lastContacted, setLastContacted] = useState("");
+  const [outreachIntent, setOutreachIntent] = useState<string[]>([]);
 
   useEffect(() => {
     if (contact) {
       setNotes(contact.notes ?? "");
       setLastContacted(contact.last_contacted ?? "");
+      setOutreachIntent(contact.outreach_intent ?? []);
     }
   }, [contact]);
 
