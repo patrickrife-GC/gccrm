@@ -75,13 +75,14 @@ export function OutreachSection({ title, intentKey, contacts, onMarkContacted, o
               <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden md:table-cell">Suggested</th>
               <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden lg:table-cell">Last Contacted</th>
               <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden lg:table-cell">Next Action</th>
+              <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden lg:table-cell">Angle</th>
               <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-4 py-8 text-center text-sm text-muted-foreground">
+                <td colSpan={8} className="px-4 py-8 text-center text-sm text-muted-foreground">
                   All done for this list! 🎉
                 </td>
               </tr>
