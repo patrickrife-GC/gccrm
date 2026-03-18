@@ -72,6 +72,7 @@ export function OutreachSection({ title, intentKey, contacts, onMarkContacted, o
               <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Name</th>
               <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden sm:table-cell">Company</th>
               <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden md:table-cell">Title</th>
+              <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden md:table-cell">Suggested</th>
               <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden lg:table-cell">Last Contacted</th>
               <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden lg:table-cell">Next Action</th>
               <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Actions</th>
@@ -80,7 +81,7 @@ export function OutreachSection({ title, intentKey, contacts, onMarkContacted, o
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-sm text-muted-foreground">
+                <td colSpan={7} className="px-4 py-8 text-center text-sm text-muted-foreground">
                   All done for this list! 🎉
                 </td>
               </tr>
@@ -101,6 +102,13 @@ export function OutreachSection({ title, intentKey, contacts, onMarkContacted, o
                   </td>
                   <td className="px-4 py-3 text-sm text-muted-foreground hidden sm:table-cell">{contact.company ?? "—"}</td>
                   <td className="px-4 py-3 text-sm text-muted-foreground hidden md:table-cell">{contact.title ?? "—"}</td>
+                  <td className="px-4 py-3 text-sm hidden md:table-cell">
+                    {contact.suggested_outreach_type ? (
+                      <span className="inline-flex px-2 py-0.5 rounded-md bg-secondary text-xs font-medium capitalize">
+                        {contact.suggested_outreach_type}
+                      </span>
+                    ) : <span className="text-muted-foreground">—</span>}
+                  </td>
                   <td className="px-4 py-3 text-sm text-muted-foreground font-mono hidden lg:table-cell">
                     {contact.last_contacted ? format(parseISO(contact.last_contacted), "MMM d, yyyy") : "Never"}
                   </td>
