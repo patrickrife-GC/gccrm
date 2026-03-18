@@ -29,6 +29,7 @@ export type Database = {
           last_name: string | null
           linkedin_url: string | null
           notes: string | null
+          skip_until: string | null
           title: string | null
           updated_at: string
         }
@@ -46,6 +47,7 @@ export type Database = {
           last_name?: string | null
           linkedin_url?: string | null
           notes?: string | null
+          skip_until?: string | null
           title?: string | null
           updated_at?: string
         }
@@ -63,6 +65,7 @@ export type Database = {
           last_name?: string | null
           linkedin_url?: string | null
           notes?: string | null
+          skip_until?: string | null
           title?: string | null
           updated_at?: string
         }

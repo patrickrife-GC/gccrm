@@ -1,0 +1,1 @@
+ALTER TABLE public.contacts ADD COLUMN skip_until date NULL;
