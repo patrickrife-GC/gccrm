@@ -16,6 +16,7 @@ export interface Contact {
   featured_today: boolean;
   featured_date: string | null;
   next_action_date: string | null;
+  outreach_intent: string[] | null;
   created_at: string;
   updated_at: string;
 }

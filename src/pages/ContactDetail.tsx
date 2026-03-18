@@ -6,6 +6,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { format, parseISO } from "date-fns";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { Checkbox } from "@/components/ui/checkbox";
+
+const OUTREACH_OPTIONS = [
+  { value: "ground_control", label: "Ground Control" },
+  { value: "ideoloop", label: "Ideoloop" },
+  { value: "baltimore_creators", label: "Baltimore Creators" },
+] as const;
 
 export default function ContactDetail() {
   const { id } = useParams<{ id: string }>();
