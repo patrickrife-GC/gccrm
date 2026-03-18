@@ -1,9 +1,11 @@
-import { Users, Rocket, TrendingUp, Clock } from "lucide-react";
-import { useContacts } from "@/hooks/useContacts";
+import { Users, Rocket, TrendingUp, Clock, ExternalLink } from "lucide-react";
+import { useContacts, useUpdateContact } from "@/hooks/useContacts";
 import { StatCard } from "@/components/StatCard";
 import { AppLayout } from "@/components/AppLayout";
-import { format, subDays, isAfter, parseISO } from "date-fns";
+import { format, subDays, isAfter, isBefore, parseISO } from "date-fns";
 import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { toast } from "@/hooks/use-toast";
 
 export default function Dashboard() {
   const { data: contacts, isLoading } = useContacts();
