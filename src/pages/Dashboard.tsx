@@ -30,10 +30,10 @@ export default function Dashboard() {
   const today = new Date();
   const ninetyDaysAgo = subDays(today, 90);
 
-  const handleMarkContacted = (id: string) => {
+  const handleMarkContacted = (id: string, followUpDays: number) => {
     updateContact.mutate(
-      { id, last_contacted: format(today, "yyyy-MM-dd"), next_action_date: format(addDays(today, 30), "yyyy-MM-dd") },
-      { onSuccess: () => toast({ title: "Marked as contacted — follow up in 30 days" }) }
+      { id, last_contacted: format(today, "yyyy-MM-dd"), next_action_date: format(addDays(today, followUpDays), "yyyy-MM-dd") },
+      { onSuccess: () => toast({ title: `Marked as contacted — follow up in ${followUpDays} days` }) }
     );
   };
 
