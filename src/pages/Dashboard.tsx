@@ -13,6 +13,15 @@ const isSkipped = (skipUntil: string | null) => {
   return isAfter(parseISO(skipUntil), new Date());
 };
 
+function NextActionBadge({ date }: { date: string | null }) {
+  if (!date) return <span className="text-muted-foreground">—</span>;
+  const days = differenceInDays(startOfDay(parseISO(date)), startOfDay(new Date()));
+  if (days < 0) return <span className="text-destructive font-medium">Overdue</span>;
+  if (days === 0) return <span className="text-destructive font-medium">Due today</span>;
+  if (days <= 7) return <span className="text-yellow-500 font-medium">In {days}d</span>;
+  return <span className="text-muted-foreground">In {days}d</span>;
+}
+
 export default function Dashboard() {
   const { data: contacts, isLoading } = useContacts();
   const updateContact = useUpdateContact();
