@@ -1,6 +1,6 @@
-import { useMemo } from "react";
+import { useMemo, useEffect, useRef } from "react";
 import { Users, Rocket, TrendingUp, Clock, ExternalLink, X } from "lucide-react";
-import { useContacts, useUpdateContact } from "@/hooks/useContacts";
+import { useContacts, useUpdateContact, useBulkUpdateContacts } from "@/hooks/useContacts";
 import { StatCard } from "@/components/StatCard";
 import { AppLayout } from "@/components/AppLayout";
 import { format, subDays, addDays, isAfter, isBefore, parseISO, differenceInDays, startOfDay } from "date-fns";
