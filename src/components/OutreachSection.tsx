@@ -129,6 +129,11 @@ export function OutreachSection({ title, intentKey, contacts, onMarkContacted, o
                         )}
                       </div>
                       <AngleBadge angle={contact.outreach_angle} />
+                      {contact.suggested_message && (
+                        <p className="text-xs text-muted-foreground italic leading-snug max-w-xs">
+                          "{contact.suggested_message}"
+                        </p>
+                      )}
                     </div>
                   </td>
                   <td className="px-4 py-3 text-sm text-muted-foreground hidden sm:table-cell">{contact.company ?? "—"}</td>
