@@ -37,19 +37,28 @@ export default function Dashboard() {
 
   const todaysFive = useMemo(() => {
     if (!contacts) return [];
+    const todayStr = format(today, "yyyy-MM-dd");
     return contacts
       .filter((c) => !isSkipped(c.skip_until))
       .sort((a, b) => {
+        // Founders first
         const aFounder = a.industry_cluster?.toLowerCase() === "founder" ? 0 : 1;
         const bFounder = b.industry_cluster?.toLowerCase() === "founder" ? 0 : 1;
         if (aFounder !== bFounder) return aFounder - bFounder;
+        // Actionable (null or <= today) first
+        const aActionable = !a.next_action_date || a.next_action_date <= todayStr ? 0 : 1;
+        const bActionable = !b.next_action_date || b.next_action_date <= todayStr ? 0 : 1;
+        if (aActionable !== bActionable) return aActionable - bActionable;
+        // No last_contacted first
         const aHas = a.last_contacted ? 1 : 0;
         const bHas = b.last_contacted ? 1 : 0;
         if (aHas !== bHas) return aHas - bHas;
+        // Oldest last_contacted first
         if (a.last_contacted && b.last_contacted) {
           const diff = parseISO(a.last_contacted).getTime() - parseISO(b.last_contacted).getTime();
           if (diff !== 0) return diff;
         }
+        // Most recently connected first
         if (!a.connected_on) return 1;
         if (!b.connected_on) return -1;
         return parseISO(b.connected_on).getTime() - parseISO(a.connected_on).getTime();
