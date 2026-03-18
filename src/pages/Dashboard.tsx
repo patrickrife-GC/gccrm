@@ -234,6 +234,7 @@ export default function Dashboard() {
           </div>
         </div>
 
+        <div>
           <h2 className="text-lg font-semibold mb-4">Reconnect Radar</h2>
           <p className="text-sm text-muted-foreground mb-4">Founders you haven't contacted in 90+ days</p>
           <div className="rounded-xl border border-border bg-card overflow-hidden">
