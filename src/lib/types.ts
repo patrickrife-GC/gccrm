@@ -21,6 +21,7 @@ export interface Contact {
   outreach_angle: string | null;
   suggested_message: string | null;
   gc_outreach_type: string | null;
+  desired_outcome: string | null;
   created_at: string;
   updated_at: string;
 }
