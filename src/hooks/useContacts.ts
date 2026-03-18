@@ -20,7 +20,7 @@ export function useContacts() {
         if (!data || data.length < pageSize) break;
         from += pageSize;
       }
-      return data as Contact[];
+      return allData;
     },
   });
 }
