@@ -88,6 +88,19 @@ export default function Dashboard() {
 
   const recentContacts = contacts?.slice(0, 5) ?? [];
 
+  const reconnectRadar = contacts
+    ?.filter((c) => {
+      if (c.industry_cluster?.toLowerCase() !== "founder") return false;
+      if (!c.last_contacted) return true;
+      return isBefore(parseISO(c.last_contacted), ninetyDaysAgo);
+    })
+    .sort((a, b) => {
+      if (!a.connected_on) return 1;
+      if (!b.connected_on) return -1;
+      return parseISO(b.connected_on).getTime() - parseISO(a.connected_on).getTime();
+    })
+    .slice(0, 25) ?? [];
+
   return (
     <AppLayout>
       <div className="space-y-8">
