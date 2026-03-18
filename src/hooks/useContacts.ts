@@ -59,3 +59,28 @@ export function useUpdateContact() {
     },
   });
 }
+
+export function useBulkUpdateContacts() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (ops: { clearOld: boolean; featuredIds: string[]; date: string }) => {
+      if (ops.clearOld) {
+        const { error: clearErr } = await supabase
+          .from("contacts")
+          .update({ featured_today: false, featured_date: null })
+          .eq("featured_today", true);
+        if (clearErr) throw clearErr;
+      }
+      if (ops.featuredIds.length > 0) {
+        const { error } = await supabase
+          .from("contacts")
+          .update({ featured_today: true, featured_date: ops.date })
+          .in("id", ops.featuredIds);
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["contacts"] });
+    },
+  });
+}
