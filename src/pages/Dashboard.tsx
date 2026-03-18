@@ -3,7 +3,7 @@ import { Users, Rocket, TrendingUp, Clock, ExternalLink, X } from "lucide-react"
 import { useContacts, useUpdateContact } from "@/hooks/useContacts";
 import { StatCard } from "@/components/StatCard";
 import { AppLayout } from "@/components/AppLayout";
-import { format, subDays, addDays, isAfter, isBefore, parseISO } from "date-fns";
+import { format, subDays, addDays, isAfter, isBefore, parseISO, differenceInDays, startOfDay } from "date-fns";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
