@@ -298,14 +298,18 @@ export default function Dashboard() {
                         <NextActionBadge date={contact.next_action_date} />
                       </td>
                       <td className="px-4 py-3">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleMarkContacted(contact.id)}
-                          disabled={updateContact.isPending}
-                        >
-                          Mark Contacted
-                        </Button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button size="sm" variant="outline" disabled={updateContact.isPending}>
+                              Mark Contacted
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => handleMarkContacted(contact.id, 7)}>Follow up in 7 days</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleMarkContacted(contact.id, 30)}>Follow up in 30 days</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleMarkContacted(contact.id, 90)}>Follow up in 90 days</DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </td>
                     </tr>
                   ))
