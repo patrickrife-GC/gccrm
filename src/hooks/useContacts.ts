@@ -6,11 +6,20 @@ export function useContacts() {
   return useQuery({
     queryKey: ["contacts"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("contacts")
-        .select("*")
-        .order("connected_on", { ascending: false });
-      if (error) throw error;
+      let allData: Contact[] = [];
+      let from = 0;
+      const pageSize = 1000;
+      while (true) {
+        const { data, error } = await supabase
+          .from("contacts")
+          .select("*")
+          .order("connected_on", { ascending: false })
+          .range(from, from + pageSize - 1);
+        if (error) throw error;
+        allData = allData.concat(data as Contact[]);
+        if (!data || data.length < pageSize) break;
+        from += pageSize;
+      }
       return data as Contact[];
     },
   });
