@@ -101,17 +101,15 @@ export function OutreachSection({ title, intentKey, contacts, onMarkContacted, o
               <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Name</th>
               <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden sm:table-cell">Company</th>
               <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden md:table-cell">Title</th>
-              <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden md:table-cell">Suggested</th>
               <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden lg:table-cell">Last Contacted</th>
               <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden lg:table-cell">Next Action</th>
-              <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden lg:table-cell">Angle</th>
               <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={8} className="px-4 py-8 text-center text-sm text-muted-foreground">
+                <td colSpan={6} className="px-4 py-8 text-center text-sm text-muted-foreground">
                   All done for this list! 🎉
                 </td>
               </tr>
@@ -119,38 +117,27 @@ export function OutreachSection({ title, intentKey, contacts, onMarkContacted, o
               filtered.map((contact) => (
                 <tr key={contact.id} className="border-b border-border last:border-0 hover:bg-secondary/30 transition-colors">
                   <td className="px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      <Link to={`/contacts/${contact.id}`} className="font-medium text-sm hover:underline">
-                        {contact.full_name || `${contact.first_name ?? ""} ${contact.last_name ?? ""}`.trim() || "—"}
-                      </Link>
-                      {contact.linkedin_url && (
-                        <a href={contact.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
-                          <ExternalLink className="w-3 h-3" />
-                        </a>
-                      )}
+                    <div className="flex flex-col gap-1.5">
+                      <div className="flex items-center gap-2">
+                        <Link to={`/contacts/${contact.id}`} className="font-medium text-sm hover:underline">
+                          {contact.full_name || `${contact.first_name ?? ""} ${contact.last_name ?? ""}`.trim() || "—"}
+                        </Link>
+                        {contact.linkedin_url && (
+                          <a href={contact.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
+                            <ExternalLink className="w-3 h-3" />
+                          </a>
+                        )}
+                      </div>
+                      <AngleBadge angle={contact.outreach_angle} />
                     </div>
                   </td>
                   <td className="px-4 py-3 text-sm text-muted-foreground hidden sm:table-cell">{contact.company ?? "—"}</td>
                   <td className="px-4 py-3 text-sm text-muted-foreground hidden md:table-cell">{contact.title ?? "—"}</td>
-                  <td className="px-4 py-3 text-sm hidden md:table-cell">
-                    {contact.suggested_outreach_type ? (
-                      <span className="inline-flex px-2 py-0.5 rounded-md bg-secondary text-xs font-medium capitalize">
-                        {contact.suggested_outreach_type}
-                      </span>
-                    ) : <span className="text-muted-foreground">—</span>}
-                  </td>
                   <td className="px-4 py-3 text-sm text-muted-foreground font-mono hidden lg:table-cell">
                     {contact.last_contacted ? format(parseISO(contact.last_contacted), "MMM d, yyyy") : "Never"}
                   </td>
                   <td className="px-4 py-3 text-sm hidden lg:table-cell">
                     <NextActionBadge date={contact.next_action_date} />
-                  </td>
-                  <td className="px-4 py-3 text-sm hidden lg:table-cell">
-                    {contact.outreach_angle ? (
-                      <span className="inline-flex px-2 py-0.5 rounded-md bg-accent/50 text-xs font-medium capitalize">
-                        {contact.outreach_angle.replace(/_/g, ' ')}
-                      </span>
-                    ) : <span className="text-muted-foreground">—</span>}
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
