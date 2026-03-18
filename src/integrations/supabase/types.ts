@@ -32,6 +32,7 @@ export type Database = {
           linkedin_url: string | null
           next_action_date: string | null
           notes: string | null
+          outreach_intent: string[] | null
           skip_until: string | null
           title: string | null
           updated_at: string
@@ -53,6 +54,7 @@ export type Database = {
           linkedin_url?: string | null
           next_action_date?: string | null
           notes?: string | null
+          outreach_intent?: string[] | null
           skip_until?: string | null
           title?: string | null
           updated_at?: string
@@ -74,6 +76,7 @@ export type Database = {
           linkedin_url?: string | null
           next_action_date?: string | null
           notes?: string | null
+          outreach_intent?: string[] | null
           skip_until?: string | null
           title?: string | null
           updated_at?: string
