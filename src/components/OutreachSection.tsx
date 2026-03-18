@@ -116,6 +116,13 @@ export function OutreachSection({ title, intentKey, contacts, onMarkContacted, o
                   <td className="px-4 py-3 text-sm hidden lg:table-cell">
                     <NextActionBadge date={contact.next_action_date} />
                   </td>
+                  <td className="px-4 py-3 text-sm hidden lg:table-cell">
+                    {contact.outreach_angle ? (
+                      <span className="inline-flex px-2 py-0.5 rounded-md bg-accent/50 text-xs font-medium capitalize">
+                        {contact.outreach_angle.replace(/_/g, ' ')}
+                      </span>
+                    ) : <span className="text-muted-foreground">—</span>}
+                  </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <DropdownMenu>
