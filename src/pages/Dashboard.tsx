@@ -3,7 +3,7 @@ import { Users, Rocket, TrendingUp, Clock, ExternalLink, X } from "lucide-react"
 import { useContacts, useUpdateContact } from "@/hooks/useContacts";
 import { StatCard } from "@/components/StatCard";
 import { AppLayout } from "@/components/AppLayout";
-import { format, subDays, addDays, isAfter, isBefore, parseISO } from "date-fns";
+import { format, subDays, addDays, isAfter, isBefore, parseISO, differenceInDays, startOfDay } from "date-fns";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
@@ -12,6 +12,15 @@ const isSkipped = (skipUntil: string | null) => {
   if (!skipUntil) return false;
   return isAfter(parseISO(skipUntil), new Date());
 };
+
+function NextActionBadge({ date }: { date: string | null }) {
+  if (!date) return <span className="text-muted-foreground">—</span>;
+  const days = differenceInDays(startOfDay(parseISO(date)), startOfDay(new Date()));
+  if (days < 0) return <span className="text-destructive font-medium">Overdue</span>;
+  if (days === 0) return <span className="text-destructive font-medium">Due today</span>;
+  if (days <= 7) return <span className="text-yellow-500 font-medium">In {days}d</span>;
+  return <span className="text-muted-foreground">In {days}d</span>;
+}
 
 export default function Dashboard() {
   const { data: contacts, isLoading } = useContacts();
@@ -203,8 +212,8 @@ export default function Dashboard() {
                       </td>
                       <td className="px-4 py-3 text-sm text-muted-foreground hidden sm:table-cell">{contact.company ?? "—"}</td>
                       <td className="px-4 py-3 text-sm text-muted-foreground hidden md:table-cell">{contact.title ?? "—"}</td>
-                      <td className="px-4 py-3 text-sm text-muted-foreground font-mono hidden lg:table-cell">
-                        {contact.next_action_date ? format(parseISO(contact.next_action_date), "MMM d, yyyy") : "—"}
+                      <td className="px-4 py-3 text-sm hidden lg:table-cell">
+                        <NextActionBadge date={contact.next_action_date} />
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
@@ -280,8 +289,8 @@ export default function Dashboard() {
                       <td className="px-4 py-3 text-sm text-muted-foreground font-mono hidden lg:table-cell">
                         {contact.last_contacted ? format(parseISO(contact.last_contacted), "MMM d, yyyy") : "Never"}
                       </td>
-                      <td className="px-4 py-3 text-sm text-muted-foreground font-mono hidden lg:table-cell">
-                        {contact.next_action_date ? format(parseISO(contact.next_action_date), "MMM d, yyyy") : "—"}
+                      <td className="px-4 py-3 text-sm hidden lg:table-cell">
+                        <NextActionBadge date={contact.next_action_date} />
                       </td>
                       <td className="px-4 py-3">
                         <Button
