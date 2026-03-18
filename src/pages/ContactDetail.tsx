@@ -158,6 +158,20 @@ export default function ContactDetail() {
               rows={4}
             />
           </div>
+          <div>
+            <label className="text-xs text-muted-foreground mb-2 block">Outreach Intent</label>
+            <div className="flex flex-wrap gap-3">
+              {OUTREACH_OPTIONS.map((opt) => (
+                <label key={opt.value} className="flex items-center gap-2 cursor-pointer">
+                  <Checkbox
+                    checked={outreachIntent.includes(opt.value)}
+                    onCheckedChange={() => toggleOutreach(opt.value)}
+                  />
+                  <span className="text-sm">{opt.label}</span>
+                </label>
+              ))}
+            </div>
+          </div>
           <button
             onClick={handleSaveNotes}
             disabled={updateContact.isPending}
