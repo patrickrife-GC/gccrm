@@ -6,6 +6,35 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import type { Contact } from "@/lib/types";
 
+const ANGLE_STYLES: Record<string, string> = {
+  podcast_guest: "bg-primary/15 text-primary border-primary/30",
+  newsletter_feature: "bg-primary/15 text-primary border-primary/30",
+  services_intro: "bg-primary/15 text-primary border-primary/30",
+  story_to_content: "bg-accent/20 text-accent-foreground border-accent/40",
+  content_amplification: "bg-accent/20 text-accent-foreground border-accent/40",
+  event_invite: "bg-secondary text-secondary-foreground border-border",
+};
+
+const ANGLE_LABELS: Record<string, string> = {
+  podcast_guest: "Podcast Guest",
+  newsletter_feature: "Newsletter Feature",
+  services_intro: "Services Intro",
+  story_to_content: "Story → Content",
+  content_amplification: "Content Amplification",
+  event_invite: "Event Invite",
+};
+
+function AngleBadge({ angle }: { angle: string | null }) {
+  if (!angle) return null;
+  const style = ANGLE_STYLES[angle] ?? "bg-secondary text-secondary-foreground border-border";
+  const label = ANGLE_LABELS[angle] ?? angle.replace(/_/g, " ");
+  return (
+    <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold border ${style}`}>
+      {label}
+    </span>
+  );
+}
+
 function NextActionBadge({ date }: { date: string | null }) {
   if (!date) return <span className="text-muted-foreground">—</span>;
   const days = differenceInDays(startOfDay(parseISO(date)), startOfDay(new Date()));
