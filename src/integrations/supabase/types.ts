@@ -35,6 +35,7 @@ export type Database = {
           outreach_angle: string | null
           outreach_intent: string[] | null
           skip_until: string | null
+          suggested_message: string | null
           suggested_outreach_type: string | null
           title: string | null
           updated_at: string
@@ -59,6 +60,7 @@ export type Database = {
           outreach_angle?: string | null
           outreach_intent?: string[] | null
           skip_until?: string | null
+          suggested_message?: string | null
           suggested_outreach_type?: string | null
           title?: string | null
           updated_at?: string
@@ -83,6 +85,7 @@ export type Database = {
           outreach_angle?: string | null
           outreach_intent?: string[] | null
           skip_until?: string | null
+          suggested_message?: string | null
           suggested_outreach_type?: string | null
           title?: string | null
           updated_at?: string

@@ -19,6 +19,7 @@ export interface Contact {
   outreach_intent: string[] | null;
   suggested_outreach_type: string | null;
   outreach_angle: string | null;
+  suggested_message: string | null;
   created_at: string;
   updated_at: string;
 }
