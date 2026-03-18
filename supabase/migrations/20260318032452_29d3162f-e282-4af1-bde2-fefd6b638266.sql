@@ -1,0 +1,1 @@
+ALTER TABLE public.contacts ADD COLUMN next_action_date date NULL;

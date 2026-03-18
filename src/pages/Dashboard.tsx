@@ -22,8 +22,8 @@ export default function Dashboard() {
 
   const handleMarkContacted = (id: string) => {
     updateContact.mutate(
-      { id, last_contacted: format(today, "yyyy-MM-dd") },
-      { onSuccess: () => toast({ title: "Marked as contacted" }) }
+      { id, last_contacted: format(today, "yyyy-MM-dd"), next_action_date: format(addDays(today, 30), "yyyy-MM-dd") },
+      { onSuccess: () => toast({ title: "Marked as contacted — follow up in 30 days" }) }
     );
   };
 
@@ -37,19 +37,28 @@ export default function Dashboard() {
 
   const todaysFive = useMemo(() => {
     if (!contacts) return [];
+    const todayStr = format(today, "yyyy-MM-dd");
     return contacts
       .filter((c) => !isSkipped(c.skip_until))
       .sort((a, b) => {
+        // Founders first
         const aFounder = a.industry_cluster?.toLowerCase() === "founder" ? 0 : 1;
         const bFounder = b.industry_cluster?.toLowerCase() === "founder" ? 0 : 1;
         if (aFounder !== bFounder) return aFounder - bFounder;
+        // Actionable (null or <= today) first
+        const aActionable = !a.next_action_date || a.next_action_date <= todayStr ? 0 : 1;
+        const bActionable = !b.next_action_date || b.next_action_date <= todayStr ? 0 : 1;
+        if (aActionable !== bActionable) return aActionable - bActionable;
+        // No last_contacted first
         const aHas = a.last_contacted ? 1 : 0;
         const bHas = b.last_contacted ? 1 : 0;
         if (aHas !== bHas) return aHas - bHas;
+        // Oldest last_contacted first
         if (a.last_contacted && b.last_contacted) {
           const diff = parseISO(a.last_contacted).getTime() - parseISO(b.last_contacted).getTime();
           if (diff !== 0) return diff;
         }
+        // Most recently connected first
         if (!a.connected_on) return 1;
         if (!b.connected_on) return -1;
         return parseISO(b.connected_on).getTime() - parseISO(a.connected_on).getTime();
@@ -166,13 +175,14 @@ export default function Dashboard() {
                   <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Name</th>
                   <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden sm:table-cell">Company</th>
                   <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden md:table-cell">Title</th>
+                  <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden lg:table-cell">Next Action</th>
                   <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {todaysFive.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="px-4 py-8 text-center text-sm text-muted-foreground">
+                     <td colSpan={5} className="px-4 py-8 text-center text-sm text-muted-foreground">
                       All done for today! 🎉
                     </td>
                   </tr>
@@ -193,6 +203,9 @@ export default function Dashboard() {
                       </td>
                       <td className="px-4 py-3 text-sm text-muted-foreground hidden sm:table-cell">{contact.company ?? "—"}</td>
                       <td className="px-4 py-3 text-sm text-muted-foreground hidden md:table-cell">{contact.title ?? "—"}</td>
+                      <td className="px-4 py-3 text-sm text-muted-foreground font-mono hidden lg:table-cell">
+                        {contact.next_action_date ? format(parseISO(contact.next_action_date), "MMM d, yyyy") : "—"}
+                      </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           <Button
@@ -233,13 +246,14 @@ export default function Dashboard() {
                   <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden md:table-cell">Title</th>
                   <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden lg:table-cell">Connected</th>
                   <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden lg:table-cell">Last Contacted</th>
+                  <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden lg:table-cell">Next Action</th>
                   <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Action</th>
                 </tr>
               </thead>
               <tbody>
                 {reconnectRadar.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-4 py-8 text-center text-sm text-muted-foreground">
+                    <td colSpan={7} className="px-4 py-8 text-center text-sm text-muted-foreground">
                       No founders need reconnecting right now.
                     </td>
                   </tr>
@@ -265,6 +279,9 @@ export default function Dashboard() {
                       </td>
                       <td className="px-4 py-3 text-sm text-muted-foreground font-mono hidden lg:table-cell">
                         {contact.last_contacted ? format(parseISO(contact.last_contacted), "MMM d, yyyy") : "Never"}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-muted-foreground font-mono hidden lg:table-cell">
+                        {contact.next_action_date ? format(parseISO(contact.next_action_date), "MMM d, yyyy") : "—"}
                       </td>
                       <td className="px-4 py-3">
                         <Button

@@ -13,6 +13,7 @@ export interface Contact {
   notes: string | null;
   last_contacted: string | null;
   skip_until: string | null;
+  next_action_date: string | null;
   created_at: string;
   updated_at: string;
 }
