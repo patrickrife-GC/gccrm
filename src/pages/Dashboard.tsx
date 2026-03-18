@@ -170,6 +170,70 @@ export default function Dashboard() {
         </div>
 
         <div>
+          <h2 className="text-lg font-semibold mb-1">Today's 5</h2>
+          <p className="text-sm text-muted-foreground mb-4">Your daily outreach priorities</p>
+          <div className="rounded-xl border border-border bg-card overflow-hidden">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-border text-left">
+                  <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Name</th>
+                  <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden sm:table-cell">Company</th>
+                  <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden md:table-cell">Title</th>
+                  <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {todaysFive.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="px-4 py-8 text-center text-sm text-muted-foreground">
+                      All done for today! 🎉
+                    </td>
+                  </tr>
+                ) : (
+                  todaysFive.map((contact) => (
+                    <tr key={contact.id} className="border-b border-border last:border-0 hover:bg-secondary/30 transition-colors">
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          <Link to={`/contacts/${contact.id}`} className="font-medium text-sm hover:underline">
+                            {contact.full_name || `${contact.first_name ?? ""} ${contact.last_name ?? ""}`.trim() || "—"}
+                          </Link>
+                          {contact.linkedin_url && (
+                            <a href={contact.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
+                              <ExternalLink className="w-3 h-3" />
+                            </a>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-sm text-muted-foreground hidden sm:table-cell">{contact.company ?? "—"}</td>
+                      <td className="px-4 py-3 text-sm text-muted-foreground hidden md:table-cell">{contact.title ?? "—"}</td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleMarkContacted(contact.id)}
+                            disabled={updateContact.isPending}
+                          >
+                            Mark Contacted
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleSkip(contact.id)}
+                          >
+                            <X className="w-3 h-3 mr-1" />
+                            Skip
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
           <h2 className="text-lg font-semibold mb-4">Reconnect Radar</h2>
           <p className="text-sm text-muted-foreground mb-4">Founders you haven't contacted in 90+ days</p>
           <div className="rounded-xl border border-border bg-card overflow-hidden">
