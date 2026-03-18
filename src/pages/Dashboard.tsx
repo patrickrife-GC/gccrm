@@ -1,4 +1,5 @@
-import { Users, Rocket, TrendingUp, Clock, ExternalLink } from "lucide-react";
+import { useState, useMemo } from "react";
+import { Users, Rocket, TrendingUp, Clock, ExternalLink, X } from "lucide-react";
 import { useContacts, useUpdateContact } from "@/hooks/useContacts";
 import { StatCard } from "@/components/StatCard";
 import { AppLayout } from "@/components/AppLayout";
@@ -7,25 +8,29 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 
+const getTodayKey = () => format(new Date(), "yyyy-MM-dd");
+
+function getSkippedIds(): string[] {
+  try {
+    const stored = localStorage.getItem("todays5_skipped");
+    if (!stored) return [];
+    const parsed = JSON.parse(stored);
+    if (parsed.date !== getTodayKey()) return [];
+    return parsed.ids ?? [];
+  } catch { return []; }
+}
+
+function setSkippedIds(ids: string[]) {
+  localStorage.setItem("todays5_skipped", JSON.stringify({ date: getTodayKey(), ids }));
+}
+
 export default function Dashboard() {
   const { data: contacts, isLoading } = useContacts();
   const updateContact = useUpdateContact();
+  const [skippedIds, setSkippedIdsState] = useState<string[]>(getSkippedIds);
 
   const today = new Date();
   const ninetyDaysAgo = subDays(today, 90);
-
-  const reconnectRadar = contacts
-    ?.filter((c) => {
-      if (c.industry_cluster?.toLowerCase() !== "founder") return false;
-      if (!c.last_contacted) return true;
-      return isBefore(parseISO(c.last_contacted), ninetyDaysAgo);
-    })
-    .sort((a, b) => {
-      if (!a.connected_on) return 1;
-      if (!b.connected_on) return -1;
-      return parseISO(b.connected_on).getTime() - parseISO(a.connected_on).getTime();
-    })
-    .slice(0, 25) ?? [];
 
   const handleMarkContacted = (id: string) => {
     updateContact.mutate(
@@ -33,6 +38,38 @@ export default function Dashboard() {
       { onSuccess: () => toast({ title: "Marked as contacted" }) }
     );
   };
+
+  const handleSkip = (id: string) => {
+    const next = [...skippedIds, id];
+    setSkippedIdsState(next);
+    setSkippedIds(next);
+  };
+
+  const todaysFive = useMemo(() => {
+    if (!contacts) return [];
+    return contacts
+      .filter((c) => !skippedIds.includes(c.id))
+      .sort((a, b) => {
+        // Founders first
+        const aFounder = a.industry_cluster?.toLowerCase() === "founder" ? 0 : 1;
+        const bFounder = b.industry_cluster?.toLowerCase() === "founder" ? 0 : 1;
+        if (aFounder !== bFounder) return aFounder - bFounder;
+        // No last_contacted first
+        const aHas = a.last_contacted ? 1 : 0;
+        const bHas = b.last_contacted ? 1 : 0;
+        if (aHas !== bHas) return aHas - bHas;
+        // Oldest last_contacted first
+        if (a.last_contacted && b.last_contacted) {
+          const diff = parseISO(a.last_contacted).getTime() - parseISO(b.last_contacted).getTime();
+          if (diff !== 0) return diff;
+        }
+        // Most recently connected first
+        if (!a.connected_on) return 1;
+        if (!b.connected_on) return -1;
+        return parseISO(b.connected_on).getTime() - parseISO(a.connected_on).getTime();
+      })
+      .slice(0, 5);
+  }, [contacts, skippedIds]);
   const total = contacts?.length ?? 0;
   const founders = contacts?.filter((c) =>
     c.title?.toLowerCase().includes("founder") ||
@@ -50,6 +87,19 @@ export default function Dashboard() {
   ).length ?? 0;
 
   const recentContacts = contacts?.slice(0, 5) ?? [];
+
+  const reconnectRadar = contacts
+    ?.filter((c) => {
+      if (c.industry_cluster?.toLowerCase() !== "founder") return false;
+      if (!c.last_contacted) return true;
+      return isBefore(parseISO(c.last_contacted), ninetyDaysAgo);
+    })
+    .sort((a, b) => {
+      if (!a.connected_on) return 1;
+      if (!b.connected_on) return -1;
+      return parseISO(b.connected_on).getTime() - parseISO(a.connected_on).getTime();
+    })
+    .slice(0, 25) ?? [];
 
   return (
     <AppLayout>
@@ -110,6 +160,71 @@ export default function Dashboard() {
                       <td className="px-4 py-3 text-sm text-muted-foreground hidden md:table-cell">{contact.title ?? "—"}</td>
                       <td className="px-4 py-3 text-sm text-muted-foreground font-mono hidden lg:table-cell">
                         {contact.connected_on ? format(parseISO(contact.connected_on), "MMM d, yyyy") : "—"}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div>
+          <h2 className="text-lg font-semibold mb-1">Today's 5</h2>
+          <p className="text-sm text-muted-foreground mb-4">Your daily outreach priorities</p>
+          <div className="rounded-xl border border-border bg-card overflow-hidden">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-border text-left">
+                  <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Name</th>
+                  <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden sm:table-cell">Company</th>
+                  <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden md:table-cell">Title</th>
+                  <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {todaysFive.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="px-4 py-8 text-center text-sm text-muted-foreground">
+                      All done for today! 🎉
+                    </td>
+                  </tr>
+                ) : (
+                  todaysFive.map((contact) => (
+                    <tr key={contact.id} className="border-b border-border last:border-0 hover:bg-secondary/30 transition-colors">
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          <Link to={`/contacts/${contact.id}`} className="font-medium text-sm hover:underline">
+                            {contact.full_name || `${contact.first_name ?? ""} ${contact.last_name ?? ""}`.trim() || "—"}
+                          </Link>
+                          {contact.linkedin_url && (
+                            <a href={contact.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
+                              <ExternalLink className="w-3 h-3" />
+                            </a>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-sm text-muted-foreground hidden sm:table-cell">{contact.company ?? "—"}</td>
+                      <td className="px-4 py-3 text-sm text-muted-foreground hidden md:table-cell">{contact.title ?? "—"}</td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleMarkContacted(contact.id)}
+                            disabled={updateContact.isPending}
+                          >
+                            Mark Contacted
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleSkip(contact.id)}
+                          >
+                            <X className="w-3 h-3 mr-1" />
+                            Skip
+                          </Button>
+                        </div>
                       </td>
                     </tr>
                   ))
