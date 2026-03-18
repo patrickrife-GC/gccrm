@@ -19,6 +19,7 @@ export type Database = {
           company: string | null
           connected_on: string | null
           created_at: string
+          desired_outcome: string | null
           email: string | null
           featured_date: string | null
           featured_today: boolean
@@ -45,6 +46,7 @@ export type Database = {
           company?: string | null
           connected_on?: string | null
           created_at?: string
+          desired_outcome?: string | null
           email?: string | null
           featured_date?: string | null
           featured_today?: boolean
@@ -71,6 +73,7 @@ export type Database = {
           company?: string | null
           connected_on?: string | null
           created_at?: string
+          desired_outcome?: string | null
           email?: string | null
           featured_date?: string | null
           featured_today?: boolean
