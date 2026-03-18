@@ -22,8 +22,8 @@ export default function Dashboard() {
 
   const handleMarkContacted = (id: string) => {
     updateContact.mutate(
-      { id, last_contacted: format(today, "yyyy-MM-dd") },
-      { onSuccess: () => toast({ title: "Marked as contacted" }) }
+      { id, last_contacted: format(today, "yyyy-MM-dd"), next_action_date: format(addDays(today, 30), "yyyy-MM-dd") },
+      { onSuccess: () => toast({ title: "Marked as contacted — follow up in 30 days" }) }
     );
   };
 
