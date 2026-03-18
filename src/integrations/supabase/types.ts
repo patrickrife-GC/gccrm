@@ -28,6 +28,7 @@ export type Database = {
           last_contacted: string | null
           last_name: string | null
           linkedin_url: string | null
+          next_action_date: string | null
           notes: string | null
           skip_until: string | null
           title: string | null
@@ -46,6 +47,7 @@ export type Database = {
           last_contacted?: string | null
           last_name?: string | null
           linkedin_url?: string | null
+          next_action_date?: string | null
           notes?: string | null
           skip_until?: string | null
           title?: string | null
@@ -64,6 +66,7 @@ export type Database = {
           last_contacted?: string | null
           last_name?: string | null
           linkedin_url?: string | null
+          next_action_date?: string | null
           notes?: string | null
           skip_until?: string | null
           title?: string | null
