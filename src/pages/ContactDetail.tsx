@@ -6,6 +6,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { format, parseISO } from "date-fns";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { Checkbox } from "@/components/ui/checkbox";
+
+const OUTREACH_OPTIONS = [
+  { value: "ground_control", label: "Ground Control" },
+  { value: "ideoloop", label: "Ideoloop" },
+  { value: "baltimore_creators", label: "Baltimore Creators" },
+] as const;
 
 export default function ContactDetail() {
   const { id } = useParams<{ id: string }>();
@@ -13,19 +20,27 @@ export default function ContactDetail() {
   const updateContact = useUpdateContact();
   const [notes, setNotes] = useState("");
   const [lastContacted, setLastContacted] = useState("");
+  const [outreachIntent, setOutreachIntent] = useState<string[]>([]);
 
   useEffect(() => {
     if (contact) {
       setNotes(contact.notes ?? "");
       setLastContacted(contact.last_contacted ?? "");
+      setOutreachIntent(contact.outreach_intent ?? []);
     }
   }, [contact]);
 
   const handleSaveNotes = () => {
     if (!id) return;
     updateContact.mutate(
-      { id, notes, last_contacted: lastContacted || null },
+      { id, notes, last_contacted: lastContacted || null, outreach_intent: outreachIntent },
       { onSuccess: () => toast.success("Contact updated") }
+    );
+  };
+
+  const toggleOutreach = (value: string) => {
+    setOutreachIntent(prev =>
+      prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]
     );
   };
 
@@ -142,6 +157,20 @@ export default function ContactDetail() {
               placeholder="Meeting notes, follow-up reminders..."
               rows={4}
             />
+          </div>
+          <div>
+            <label className="text-xs text-muted-foreground mb-2 block">Outreach Intent</label>
+            <div className="flex flex-wrap gap-3">
+              {OUTREACH_OPTIONS.map((opt) => (
+                <label key={opt.value} className="flex items-center gap-2 cursor-pointer">
+                  <Checkbox
+                    checked={outreachIntent.includes(opt.value)}
+                    onCheckedChange={() => toggleOutreach(opt.value)}
+                  />
+                  <span className="text-sm">{opt.label}</span>
+                </label>
+              ))}
+            </div>
           </div>
           <button
             onClick={handleSaveNotes}
