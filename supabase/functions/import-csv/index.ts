@@ -29,10 +29,20 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
 
   try {
-    const csvText = await req.text()
+    const { url } = await req.json()
+    
+    // Fetch CSV from URL
+    const csvResponse = await fetch(url)
+    if (!csvResponse.ok) {
+      return new Response(JSON.stringify({ error: `Failed to fetch CSV: ${csvResponse.status}` }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      })
+    }
+    
+    const csvText = await csvResponse.text()
     const lines = csvText.split('\n').filter(l => l.trim())
     
-    // Skip header if present
+    // Skip header
     const startIdx = lines[0]?.includes('first_name') ? 1 : 0
 
     const supabase = createClient(
@@ -41,12 +51,16 @@ Deno.serve(async (req) => {
     )
 
     const contacts: any[] = []
+    let skipped = 0
     for (let i = startIdx; i < lines.length; i++) {
       const fields = parseCSVLine(lines[i])
       const [first_name, last_name, linkedin_url, email, company, title, connected_on, industry_cluster, full_name] = fields
 
       // Skip empty rows
-      if (!first_name?.trim() && !last_name?.trim() && !full_name?.trim()) continue
+      if (!first_name?.trim() && !last_name?.trim() && !full_name?.trim()) {
+        skipped++
+        continue
+      }
 
       const isValidDate = connected_on && /^\d{4}-\d{2}-\d{2}$/.test(connected_on.trim())
 
@@ -76,7 +90,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    return new Response(JSON.stringify({ inserted, total_parsed: contacts.length, errors }), {
+    return new Response(JSON.stringify({ inserted, total_parsed: contacts.length, skipped, errors }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     })
   } catch (err) {
