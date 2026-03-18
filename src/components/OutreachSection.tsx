@@ -161,7 +161,11 @@ export function OutreachSection({ title, intentKey, contacts, onMarkContacted, o
                           </a>
                         )}
                       </div>
-                      <AngleBadge angle={contact.outreach_angle} />
+                      {intentKey === "ground_control" && contact.gc_outreach_type ? (
+                        <GcTypeBadge type={contact.gc_outreach_type} />
+                      ) : (
+                        <AngleBadge angle={contact.outreach_angle} />
+                      )}
                       {contact.suggested_message && (
                         <p className="text-xs text-muted-foreground italic leading-snug max-w-xs">
                           "{contact.suggested_message}"
