@@ -33,8 +33,14 @@ export default function ContactDetail() {
   const handleSaveNotes = () => {
     if (!id) return;
     updateContact.mutate(
-      { id, notes, last_contacted: lastContacted || null },
+      { id, notes, last_contacted: lastContacted || null, outreach_intent: outreachIntent },
       { onSuccess: () => toast.success("Contact updated") }
+    );
+  };
+
+  const toggleOutreach = (value: string) => {
+    setOutreachIntent(prev =>
+      prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]
     );
   };
 
