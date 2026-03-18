@@ -9,7 +9,30 @@ import { toast } from "@/hooks/use-toast";
 
 export default function Dashboard() {
   const { data: contacts, isLoading } = useContacts();
+  const updateContact = useUpdateContact();
 
+  const today = new Date();
+  const ninetyDaysAgo = subDays(today, 90);
+
+  const reconnectRadar = contacts
+    ?.filter((c) => {
+      if (c.industry_cluster?.toLowerCase() !== "founder") return false;
+      if (!c.last_contacted) return true;
+      return isBefore(parseISO(c.last_contacted), ninetyDaysAgo);
+    })
+    .sort((a, b) => {
+      if (!a.connected_on) return 1;
+      if (!b.connected_on) return -1;
+      return parseISO(b.connected_on).getTime() - parseISO(a.connected_on).getTime();
+    })
+    .slice(0, 25) ?? [];
+
+  const handleMarkContacted = (id: string) => {
+    updateContact.mutate(
+      { id, last_contacted: format(today, "yyyy-MM-dd") },
+      { onSuccess: () => toast({ title: "Marked as contacted" }) }
+    );
+  };
   const total = contacts?.length ?? 0;
   const founders = contacts?.filter((c) =>
     c.title?.toLowerCase().includes("founder") ||
