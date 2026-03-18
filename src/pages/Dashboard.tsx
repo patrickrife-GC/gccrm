@@ -7,6 +7,7 @@ import { format, subDays, addDays, isAfter, isBefore, parseISO, differenceInDays
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const isSkipped = (skipUntil: string | null) => {
   if (!skipUntil) return false;
@@ -29,10 +30,10 @@ export default function Dashboard() {
   const today = new Date();
   const ninetyDaysAgo = subDays(today, 90);
 
-  const handleMarkContacted = (id: string) => {
+  const handleMarkContacted = (id: string, followUpDays: number) => {
     updateContact.mutate(
-      { id, last_contacted: format(today, "yyyy-MM-dd"), next_action_date: format(addDays(today, 30), "yyyy-MM-dd") },
-      { onSuccess: () => toast({ title: "Marked as contacted — follow up in 30 days" }) }
+      { id, last_contacted: format(today, "yyyy-MM-dd"), next_action_date: format(addDays(today, followUpDays), "yyyy-MM-dd") },
+      { onSuccess: () => toast({ title: `Marked as contacted — follow up in ${followUpDays} days` }) }
     );
   };
 
@@ -217,14 +218,18 @@ export default function Dashboard() {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleMarkContacted(contact.id)}
-                            disabled={updateContact.isPending}
-                          >
-                            Mark Contacted
-                          </Button>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button size="sm" variant="outline" disabled={updateContact.isPending}>
+                                Mark Contacted
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => handleMarkContacted(contact.id, 7)}>Follow up in 7 days</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleMarkContacted(contact.id, 30)}>Follow up in 30 days</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleMarkContacted(contact.id, 90)}>Follow up in 90 days</DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                           <Button
                             size="sm"
                             variant="ghost"
@@ -293,14 +298,18 @@ export default function Dashboard() {
                         <NextActionBadge date={contact.next_action_date} />
                       </td>
                       <td className="px-4 py-3">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleMarkContacted(contact.id)}
-                          disabled={updateContact.isPending}
-                        >
-                          Mark Contacted
-                        </Button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button size="sm" variant="outline" disabled={updateContact.isPending}>
+                              Mark Contacted
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => handleMarkContacted(contact.id, 7)}>Follow up in 7 days</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleMarkContacted(contact.id, 30)}>Follow up in 30 days</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleMarkContacted(contact.id, 90)}>Follow up in 90 days</DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </td>
                     </tr>
                   ))
