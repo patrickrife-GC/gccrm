@@ -76,6 +76,7 @@ export default function Dashboard() {
 
   const reconnectRadar = contacts
     ?.filter((c) => {
+      if (isSkipped(c.skip_until)) return false;
       if (c.industry_cluster?.toLowerCase() !== "founder") return false;
       if (!c.last_contacted) return true;
       return isBefore(parseISO(c.last_contacted), ninetyDaysAgo);
