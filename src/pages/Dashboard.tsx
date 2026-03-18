@@ -289,8 +289,8 @@ export default function Dashboard() {
                       <td className="px-4 py-3 text-sm text-muted-foreground font-mono hidden lg:table-cell">
                         {contact.last_contacted ? format(parseISO(contact.last_contacted), "MMM d, yyyy") : "Never"}
                       </td>
-                      <td className="px-4 py-3 text-sm text-muted-foreground font-mono hidden lg:table-cell">
-                        {contact.next_action_date ? format(parseISO(contact.next_action_date), "MMM d, yyyy") : "—"}
+                      <td className="px-4 py-3 text-sm hidden lg:table-cell">
+                        <NextActionBadge date={contact.next_action_date} />
                       </td>
                       <td className="px-4 py-3">
                         <Button
