@@ -20,6 +20,8 @@ export type Database = {
           connected_on: string | null
           created_at: string
           email: string | null
+          featured_date: string | null
+          featured_today: boolean
           first_name: string | null
           full_name: string | null
           id: string
@@ -39,6 +41,8 @@ export type Database = {
           connected_on?: string | null
           created_at?: string
           email?: string | null
+          featured_date?: string | null
+          featured_today?: boolean
           first_name?: string | null
           full_name?: string | null
           id?: string
@@ -58,6 +62,8 @@ export type Database = {
           connected_on?: string | null
           created_at?: string
           email?: string | null
+          featured_date?: string | null
+          featured_today?: boolean
           first_name?: string | null
           full_name?: string | null
           id?: string
