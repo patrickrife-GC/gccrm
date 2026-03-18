@@ -24,6 +24,39 @@ const ANGLE_LABELS: Record<string, string> = {
   event_invite: "Event Invite",
 };
 
+const GC_TYPE_STYLES: Record<string, string> = {
+  ghostwriting: "bg-primary/15 text-primary border-primary/30",
+  social_growth: "bg-primary/15 text-primary border-primary/30",
+  website: "bg-secondary text-secondary-foreground border-border",
+  lead_gen: "bg-secondary text-secondary-foreground border-border",
+  outbound_strategy: "bg-accent/20 text-accent-foreground border-accent/40",
+  speaking: "bg-destructive/15 text-destructive border-destructive/30 ring-1 ring-destructive/20",
+  partnership: "bg-accent/20 text-accent-foreground border-accent/40",
+  general_services: "bg-secondary text-secondary-foreground border-border",
+};
+
+const GC_TYPE_LABELS: Record<string, string> = {
+  ghostwriting: "Ghostwriting",
+  social_growth: "Social Growth",
+  website: "Website",
+  lead_gen: "Lead Gen",
+  outbound_strategy: "Outbound Strategy",
+  speaking: "Speaking",
+  partnership: "Partnership",
+  general_services: "General Services",
+};
+
+function GcTypeBadge({ type }: { type: string | null }) {
+  if (!type) return null;
+  const style = GC_TYPE_STYLES[type] ?? "bg-secondary text-secondary-foreground border-border";
+  const label = GC_TYPE_LABELS[type] ?? type.replace(/_/g, " ");
+  return (
+    <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide border ${style}`}>
+      {label}
+    </span>
+  );
+}
+
 function AngleBadge({ angle }: { angle: string | null }) {
   if (!angle) return null;
   const style = ANGLE_STYLES[angle] ?? "bg-secondary text-secondary-foreground border-border";
@@ -128,7 +161,11 @@ export function OutreachSection({ title, intentKey, contacts, onMarkContacted, o
                           </a>
                         )}
                       </div>
-                      <AngleBadge angle={contact.outreach_angle} />
+                      {intentKey === "ground_control" && contact.gc_outreach_type ? (
+                        <GcTypeBadge type={contact.gc_outreach_type} />
+                      ) : (
+                        <AngleBadge angle={contact.outreach_angle} />
+                      )}
                       {contact.suggested_message && (
                         <p className="text-xs text-muted-foreground italic leading-snug max-w-xs">
                           "{contact.suggested_message}"
