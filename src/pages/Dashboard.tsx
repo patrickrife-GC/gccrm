@@ -1,13 +1,38 @@
-import { Users, Rocket, TrendingUp, Clock } from "lucide-react";
-import { useContacts } from "@/hooks/useContacts";
+import { Users, Rocket, TrendingUp, Clock, ExternalLink } from "lucide-react";
+import { useContacts, useUpdateContact } from "@/hooks/useContacts";
 import { StatCard } from "@/components/StatCard";
 import { AppLayout } from "@/components/AppLayout";
-import { format, subDays, isAfter, parseISO } from "date-fns";
+import { format, subDays, isAfter, isBefore, parseISO } from "date-fns";
 import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { toast } from "@/hooks/use-toast";
 
 export default function Dashboard() {
   const { data: contacts, isLoading } = useContacts();
+  const updateContact = useUpdateContact();
 
+  const today = new Date();
+  const ninetyDaysAgo = subDays(today, 90);
+
+  const reconnectRadar = contacts
+    ?.filter((c) => {
+      if (c.industry_cluster?.toLowerCase() !== "founder") return false;
+      if (!c.last_contacted) return true;
+      return isBefore(parseISO(c.last_contacted), ninetyDaysAgo);
+    })
+    .sort((a, b) => {
+      if (!a.connected_on) return 1;
+      if (!b.connected_on) return -1;
+      return parseISO(b.connected_on).getTime() - parseISO(a.connected_on).getTime();
+    })
+    .slice(0, 25) ?? [];
+
+  const handleMarkContacted = (id: string) => {
+    updateContact.mutate(
+      { id, last_contacted: format(today, "yyyy-MM-dd") },
+      { onSuccess: () => toast({ title: "Marked as contacted" }) }
+    );
+  };
   const total = contacts?.length ?? 0;
   const founders = contacts?.filter((c) =>
     c.title?.toLowerCase().includes("founder") ||
@@ -85,6 +110,69 @@ export default function Dashboard() {
                       <td className="px-4 py-3 text-sm text-muted-foreground hidden md:table-cell">{contact.title ?? "—"}</td>
                       <td className="px-4 py-3 text-sm text-muted-foreground font-mono hidden lg:table-cell">
                         {contact.connected_on ? format(parseISO(contact.connected_on), "MMM d, yyyy") : "—"}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div>
+          <h2 className="text-lg font-semibold mb-4">Reconnect Radar</h2>
+          <p className="text-sm text-muted-foreground mb-4">Founders you haven't contacted in 90+ days</p>
+          <div className="rounded-xl border border-border bg-card overflow-hidden">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-border text-left">
+                  <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Name</th>
+                  <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden sm:table-cell">Company</th>
+                  <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden md:table-cell">Title</th>
+                  <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden lg:table-cell">Connected</th>
+                  <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden lg:table-cell">Last Contacted</th>
+                  <th className="px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {reconnectRadar.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-4 py-8 text-center text-sm text-muted-foreground">
+                      No founders need reconnecting right now.
+                    </td>
+                  </tr>
+                ) : (
+                  reconnectRadar.map((contact) => (
+                    <tr key={contact.id} className="border-b border-border last:border-0 hover:bg-secondary/30 transition-colors">
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          <Link to={`/contacts/${contact.id}`} className="font-medium text-sm hover:underline">
+                            {contact.full_name || `${contact.first_name ?? ""} ${contact.last_name ?? ""}`.trim() || "—"}
+                          </Link>
+                          {contact.linkedin_url && (
+                            <a href={contact.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
+                              <ExternalLink className="w-3 h-3" />
+                            </a>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-sm text-muted-foreground hidden sm:table-cell">{contact.company ?? "—"}</td>
+                      <td className="px-4 py-3 text-sm text-muted-foreground hidden md:table-cell">{contact.title ?? "—"}</td>
+                      <td className="px-4 py-3 text-sm text-muted-foreground font-mono hidden lg:table-cell">
+                        {contact.connected_on ? format(parseISO(contact.connected_on), "MMM d, yyyy") : "—"}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-muted-foreground font-mono hidden lg:table-cell">
+                        {contact.last_contacted ? format(parseISO(contact.last_contacted), "MMM d, yyyy") : "Never"}
+                      </td>
+                      <td className="px-4 py-3">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleMarkContacted(contact.id)}
+                          disabled={updateContact.isPending}
+                        >
+                          Mark Contacted
+                        </Button>
                       </td>
                     </tr>
                   ))
