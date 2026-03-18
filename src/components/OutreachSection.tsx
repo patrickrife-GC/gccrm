@@ -101,6 +101,13 @@ export function OutreachSection({ title, intentKey, contacts, onMarkContacted, o
                   </td>
                   <td className="px-4 py-3 text-sm text-muted-foreground hidden sm:table-cell">{contact.company ?? "—"}</td>
                   <td className="px-4 py-3 text-sm text-muted-foreground hidden md:table-cell">{contact.title ?? "—"}</td>
+                  <td className="px-4 py-3 text-sm hidden md:table-cell">
+                    {contact.suggested_outreach_type ? (
+                      <span className="inline-flex px-2 py-0.5 rounded-md bg-secondary text-xs font-medium capitalize">
+                        {contact.suggested_outreach_type}
+                      </span>
+                    ) : <span className="text-muted-foreground">—</span>}
+                  </td>
                   <td className="px-4 py-3 text-sm text-muted-foreground font-mono hidden lg:table-cell">
                     {contact.last_contacted ? format(parseISO(contact.last_contacted), "MMM d, yyyy") : "Never"}
                   </td>
