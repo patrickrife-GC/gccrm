@@ -24,6 +24,7 @@ const App = () => (
           <Route path="/contacts" element={<Contacts />} />
           <Route path="/contacts/:id" element={<ContactDetail />} />
           <Route path="/command-center" element={<CommandCenter />} />
+          <Route path="/whatsapp" element={<WhatsApp />} />
           <Route path="/import" element={<Import />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
