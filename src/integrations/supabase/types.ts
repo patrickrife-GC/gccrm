@@ -173,6 +173,39 @@ export type Database = {
         }
         Relationships: []
       }
+      wa_contacts: {
+        Row: {
+          created_at: string
+          groups: string[] | null
+          jid: string
+          name: string
+          responded: boolean
+          sent: boolean
+          sub: string | null
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          groups?: string[] | null
+          jid: string
+          name: string
+          responded?: boolean
+          sent?: boolean
+          sub?: string | null
+          type: string
+        }
+        Update: {
+          created_at?: string
+          groups?: string[] | null
+          jid?: string
+          name?: string
+          responded?: boolean
+          sent?: boolean
+          sub?: string | null
+          type?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

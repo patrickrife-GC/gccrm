@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import Contacts from "./pages/Contacts";
 import ContactDetail from "./pages/ContactDetail";
 import CommandCenter from "./pages/CommandCenter";
+import WhatsApp from "./pages/WhatsApp";
 import Import from "./pages/Import";
 import NotFound from "./pages/NotFound";
 
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/contacts" element={<Contacts />} />
           <Route path="/contacts/:id" element={<ContactDetail />} />
           <Route path="/command-center" element={<CommandCenter />} />
+          <Route path="/whatsapp" element={<WhatsApp />} />
           <Route path="/import" element={<Import />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
