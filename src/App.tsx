@@ -22,6 +22,7 @@ const App = () => (
           <Route path="/" element={<Dashboard />} />
           <Route path="/contacts" element={<Contacts />} />
           <Route path="/contacts/:id" element={<ContactDetail />} />
+          <Route path="/command-center" element={<CommandCenter />} />
           <Route path="/import" element={<Import />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
