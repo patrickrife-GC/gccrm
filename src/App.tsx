@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import Contacts from "./pages/Contacts";
 import ContactDetail from "./pages/ContactDetail";
 import CommandCenter from "./pages/CommandCenter";
+import WhatsApp from "./pages/WhatsApp";
 import Import from "./pages/Import";
 import NotFound from "./pages/NotFound";
 
