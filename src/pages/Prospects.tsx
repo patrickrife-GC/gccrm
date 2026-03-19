@@ -23,6 +23,51 @@ const SEGMENT_FILTERS = [
   "Technical Builder",
 ];
 
+function EmptyState() {
+  const { toast } = useToast();
+  const [running, setRunning] = useState(false);
+
+  const handleRun = async () => {
+    setRunning(true);
+    try {
+      toast({
+        title: "Prospecting run triggered",
+        description: "Push prospects from your Vibe MCP session — they'll appear here automatically.",
+      });
+    } catch (err: any) {
+      toast({
+        title: "Couldn't trigger run",
+        description: err?.message ?? "Unknown error",
+        variant: "destructive",
+      });
+    } finally {
+      setRunning(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center py-20 text-center gap-4">
+      <CheckCircle2 className="w-12 h-12 text-emerald-500/50" />
+      <p className="text-muted-foreground">
+        Queue is clear — next batch arrives tomorrow at 8am
+      </p>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={handleRun}
+        disabled={running}
+        className="gap-2"
+      >
+        <Zap className="w-4 h-4" />
+        {running ? "Running…" : "Run Prospecting Now"}
+      </Button>
+      <p className="text-xs text-muted-foreground max-w-md">
+        POST your Vibe MCP results to the ingest-prospects endpoint to populate this queue.
+      </p>
+    </div>
+  );
+}
+
 export default function Prospects() {
   const { data: queue, isLoading } = useIcpStaging();
   const { data: allProspects } = useIcpStagingAll();
