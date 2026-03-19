@@ -17,6 +17,7 @@ export type Database = {
       contacts: {
         Row: {
           company: string | null
+          company_website: string | null
           connected_on: string | null
           created_at: string
           desired_outcome: string | null
@@ -26,6 +27,7 @@ export type Database = {
           first_name: string | null
           full_name: string | null
           gc_outreach_type: string | null
+          icp_segment: string | null
           id: string
           industry_cluster: string | null
           influence_score: number | null
@@ -37,13 +39,18 @@ export type Database = {
           outreach_angle: string | null
           outreach_intent: string[] | null
           skip_until: string | null
+          source: string | null
+          source_date: string | null
           suggested_message: string | null
           suggested_outreach_type: string | null
           title: string | null
           updated_at: string
+          verified_email: string | null
+          vibe_prospect_id: string | null
         }
         Insert: {
           company?: string | null
+          company_website?: string | null
           connected_on?: string | null
           created_at?: string
           desired_outcome?: string | null
@@ -53,6 +60,7 @@ export type Database = {
           first_name?: string | null
           full_name?: string | null
           gc_outreach_type?: string | null
+          icp_segment?: string | null
           id?: string
           industry_cluster?: string | null
           influence_score?: number | null
@@ -64,13 +72,18 @@ export type Database = {
           outreach_angle?: string | null
           outreach_intent?: string[] | null
           skip_until?: string | null
+          source?: string | null
+          source_date?: string | null
           suggested_message?: string | null
           suggested_outreach_type?: string | null
           title?: string | null
           updated_at?: string
+          verified_email?: string | null
+          vibe_prospect_id?: string | null
         }
         Update: {
           company?: string | null
+          company_website?: string | null
           connected_on?: string | null
           created_at?: string
           desired_outcome?: string | null
@@ -80,6 +93,7 @@ export type Database = {
           first_name?: string | null
           full_name?: string | null
           gc_outreach_type?: string | null
+          icp_segment?: string | null
           id?: string
           industry_cluster?: string | null
           influence_score?: number | null
@@ -91,10 +105,98 @@ export type Database = {
           outreach_angle?: string | null
           outreach_intent?: string[] | null
           skip_until?: string | null
+          source?: string | null
+          source_date?: string | null
           suggested_message?: string | null
           suggested_outreach_type?: string | null
           title?: string | null
           updated_at?: string
+          verified_email?: string | null
+          vibe_prospect_id?: string | null
+        }
+        Relationships: []
+      }
+      icp_staging: {
+        Row: {
+          brand: string | null
+          business_id: string | null
+          created_at: string | null
+          icp_segment: string | null
+          id: string
+          promoted: boolean
+          promoted_at: string | null
+          prospect_city: string | null
+          prospect_company_name: string | null
+          prospect_company_website: string | null
+          prospect_country: string | null
+          prospect_experience: Json | null
+          prospect_full_name: string | null
+          prospect_job_department_main: string | null
+          prospect_job_level_main: string | null
+          prospect_job_title: string | null
+          prospect_linkedin_url: string | null
+          prospect_professional_email_hashed: string | null
+          prospect_region: string | null
+          prospect_skills: Json | null
+          skip_reason: string | null
+          skipped: boolean
+          source: string | null
+          source_date: string | null
+          vibe_prospect_id: string | null
+        }
+        Insert: {
+          brand?: string | null
+          business_id?: string | null
+          created_at?: string | null
+          icp_segment?: string | null
+          id?: string
+          promoted?: boolean
+          promoted_at?: string | null
+          prospect_city?: string | null
+          prospect_company_name?: string | null
+          prospect_company_website?: string | null
+          prospect_country?: string | null
+          prospect_experience?: Json | null
+          prospect_full_name?: string | null
+          prospect_job_department_main?: string | null
+          prospect_job_level_main?: string | null
+          prospect_job_title?: string | null
+          prospect_linkedin_url?: string | null
+          prospect_professional_email_hashed?: string | null
+          prospect_region?: string | null
+          prospect_skills?: Json | null
+          skip_reason?: string | null
+          skipped?: boolean
+          source?: string | null
+          source_date?: string | null
+          vibe_prospect_id?: string | null
+        }
+        Update: {
+          brand?: string | null
+          business_id?: string | null
+          created_at?: string | null
+          icp_segment?: string | null
+          id?: string
+          promoted?: boolean
+          promoted_at?: string | null
+          prospect_city?: string | null
+          prospect_company_name?: string | null
+          prospect_company_website?: string | null
+          prospect_country?: string | null
+          prospect_experience?: Json | null
+          prospect_full_name?: string | null
+          prospect_job_department_main?: string | null
+          prospect_job_level_main?: string | null
+          prospect_job_title?: string | null
+          prospect_linkedin_url?: string | null
+          prospect_professional_email_hashed?: string | null
+          prospect_region?: string | null
+          prospect_skills?: Json | null
+          skip_reason?: string | null
+          skipped?: boolean
+          source?: string | null
+          source_date?: string | null
+          vibe_prospect_id?: string | null
         }
         Relationships: []
       }
