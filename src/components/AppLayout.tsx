@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Users, Upload, Command, MessageCircle } from "lucide-react";
+import { LayoutDashboard, Users, Upload, Command, MessageCircle, UserSearch } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -7,6 +7,7 @@ const navItems = [
   { to: "/contacts", label: "Contacts", icon: Users },
   { to: "/command-center", label: "Command Center", icon: Command },
   { to: "/whatsapp", label: "WhatsApp", icon: MessageCircle },
+  { to: "/prospects", label: "Prospects", icon: UserSearch },
   { to: "/import", label: "Import", icon: Upload },
 ];
 
