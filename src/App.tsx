@@ -10,6 +10,7 @@ import CommandCenter from "./pages/CommandCenter";
 import WhatsApp from "./pages/WhatsApp";
 import Import from "./pages/Import";
 import NotFound from "./pages/NotFound";
+import { CommandBar } from "./components/CommandBar";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <CommandBar />
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/contacts" element={<Contacts />} />
