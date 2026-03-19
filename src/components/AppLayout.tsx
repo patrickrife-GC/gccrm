@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Users, Upload, Command, MessageCircle } from "lucide-react";
+import { LayoutDashboard, Users, Upload, Command, MessageCircle, UserSearch } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
