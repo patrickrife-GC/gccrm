@@ -1,10 +1,10 @@
 import { cn } from "@/lib/utils";
 
-interface StatCardProps {
+export interface StatCardProps {
   label: string;
   value: number;
-  accent: "total" | "founders" | "investors" | "recent";
-  icon: React.ReactNode;
+  accent?: "total" | "founders" | "investors" | "recent";
+  icon?: React.ReactNode;
 }
 
 const accentMap = {
@@ -19,9 +19,11 @@ export function StatCard({ label, value, accent, icon }: StatCardProps) {
     <div className="rounded-xl border border-border bg-card p-5 flex flex-col gap-3">
       <div className="flex items-center justify-between">
         <span className="text-sm font-medium text-muted-foreground">{label}</span>
-        <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center", accentMap[accent])}>
-          {icon}
-        </div>
+        {accent && icon && (
+          <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center", accentMap[accent])}>
+            {icon}
+          </div>
+        )}
       </div>
       <span className="text-3xl font-semibold tracking-tight font-mono">{value}</span>
     </div>
