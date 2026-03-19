@@ -1,10 +1,11 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { useContacts } from "@/hooks/useContacts";
 import { useThreads } from "@/hooks/useThreads";
 import { useWaContacts } from "@/hooks/useWaContacts";
-import { Layers, Users, MessageCircle } from "lucide-react";
+import { useIcpStaging } from "@/hooks/useIcpStaging";
+import { Layers, Users, MessageCircle, UserSearch } from "lucide-react";
 
 export function CommandBar() {
   const [open, setOpen] = useState(false);
@@ -13,6 +14,7 @@ export function CommandBar() {
   const { data: contacts } = useContacts();
   const { data: threads } = useThreads();
   const { data: waContacts } = useWaContacts();
+  const { data: prospects } = useIcpStaging();
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -33,14 +35,37 @@ export function CommandBar() {
       navigate("/command-center");
     } else if (value.startsWith("wa:")) {
       navigate("/whatsapp");
+    } else if (value.startsWith("prospect:")) {
+      navigate("/prospects");
     }
   };
 
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
-      <CommandInput placeholder="Search threads, contacts, WhatsApp..." />
+      <CommandInput placeholder="Search threads, contacts, prospects, WhatsApp..." />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
+
+        {prospects && prospects.length > 0 && (
+          <CommandGroup heading="Prospects">
+            {prospects.slice(0, 30).map((p) => (
+              <CommandItem
+                key={`prospect:${p.id}`}
+                value={`prospect:${p.id} ${p.prospect_full_name ?? ""} ${p.prospect_company_name ?? ""} ${p.prospect_job_title ?? ""} ${p.icp_segment ?? ""} ${p.brand ?? ""}`}
+                onSelect={() => handleSelect(`prospect:${p.id}`)}
+              >
+                <UserSearch className="mr-2 h-4 w-4 text-emerald-400 shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <span className="text-sm">{p.prospect_full_name ?? "—"}</span>
+                  {p.prospect_company_name && (
+                    <span className="text-xs text-muted-foreground ml-2">{p.prospect_company_name}</span>
+                  )}
+                  <span className="text-[10px] text-muted-foreground ml-2">Prospect</span>
+                </div>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        )}
 
         {threads && threads.length > 0 && (
           <CommandGroup heading="Threads">
