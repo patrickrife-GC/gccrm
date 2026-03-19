@@ -8,8 +8,11 @@ import {
   usePromoteProspect,
   useSkipProspect,
 } from "@/hooks/useIcpStaging";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Zap } from "lucide-react";
 import { isThisWeek } from "date-fns";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const BRAND_FILTERS = ["All brands", "Ground Control", "Ideoloop", "Baltimore Creators"];
 const SEGMENT_FILTERS = [
