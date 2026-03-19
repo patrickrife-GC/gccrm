@@ -98,6 +98,81 @@ export type Database = {
         }
         Relationships: []
       }
+      ideas: {
+        Row: {
+          created_at: string
+          executed: boolean
+          id: string
+          notes: string | null
+          title: string
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          executed?: boolean
+          id?: string
+          notes?: string | null
+          title: string
+          type: string
+        }
+        Update: {
+          created_at?: string
+          executed?: boolean
+          id?: string
+          notes?: string | null
+          title?: string
+          type?: string
+        }
+        Relationships: []
+      }
+      threads: {
+        Row: {
+          created_at: string
+          id: string
+          last_touched: string
+          next_action: string | null
+          notes: string | null
+          progress: number
+          progress_note: string | null
+          revenue: string | null
+          section: string
+          status: string
+          sub: string | null
+          tags: string[] | null
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          last_touched?: string
+          next_action?: string | null
+          notes?: string | null
+          progress?: number
+          progress_note?: string | null
+          revenue?: string | null
+          section: string
+          status?: string
+          sub?: string | null
+          tags?: string[] | null
+          title: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_touched?: string
+          next_action?: string | null
+          notes?: string | null
+          progress?: number
+          progress_note?: string | null
+          revenue?: string | null
+          section?: string
+          status?: string
+          sub?: string | null
+          tags?: string[] | null
+          title?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
