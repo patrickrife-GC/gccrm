@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Contacts from "./pages/Contacts";
 import ContactDetail from "./pages/ContactDetail";
+import CommandCenter from "./pages/CommandCenter";
 import Import from "./pages/Import";
 import NotFound from "./pages/NotFound";
 
