@@ -129,12 +129,7 @@ export default function Prospects() {
         {isLoading ? (
           <p className="text-muted-foreground text-sm">Loading prospects…</p>
         ) : filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <CheckCircle2 className="w-12 h-12 text-emerald-500/50 mb-4" />
-            <p className="text-muted-foreground">
-              Queue is clear — next batch arrives tomorrow at 8am
-            </p>
-          </div>
+          <EmptyState />
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.map((p) => (
