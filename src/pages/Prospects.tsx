@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { StatCard } from "@/components/StatCard";
 import { ProspectCard } from "@/components/ProspectCard";
@@ -8,8 +8,11 @@ import {
   usePromoteProspect,
   useSkipProspect,
 } from "@/hooks/useIcpStaging";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Zap } from "lucide-react";
 import { isThisWeek } from "date-fns";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const BRAND_FILTERS = ["All brands", "Ground Control", "Ideoloop", "Baltimore Creators"];
 const SEGMENT_FILTERS = [
@@ -19,6 +22,51 @@ const SEGMENT_FILTERS = [
   "Busy Expert",
   "Technical Builder",
 ];
+
+function EmptyState() {
+  const { toast } = useToast();
+  const [running, setRunning] = useState(false);
+
+  const handleRun = async () => {
+    setRunning(true);
+    try {
+      toast({
+        title: "Prospecting run triggered",
+        description: "Push prospects from your Vibe MCP session — they'll appear here automatically.",
+      });
+    } catch (err: any) {
+      toast({
+        title: "Couldn't trigger run",
+        description: err?.message ?? "Unknown error",
+        variant: "destructive",
+      });
+    } finally {
+      setRunning(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center py-20 text-center gap-4">
+      <CheckCircle2 className="w-12 h-12 text-emerald-500/50" />
+      <p className="text-muted-foreground">
+        Queue is clear — next batch arrives tomorrow at 8am
+      </p>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={handleRun}
+        disabled={running}
+        className="gap-2"
+      >
+        <Zap className="w-4 h-4" />
+        {running ? "Running…" : "Run Prospecting Now"}
+      </Button>
+      <p className="text-xs text-muted-foreground max-w-md">
+        POST your Vibe MCP results to the ingest-prospects endpoint to populate this queue.
+      </p>
+    </div>
+  );
+}
 
 export default function Prospects() {
   const { data: queue, isLoading } = useIcpStaging();
@@ -126,12 +174,7 @@ export default function Prospects() {
         {isLoading ? (
           <p className="text-muted-foreground text-sm">Loading prospects…</p>
         ) : filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <CheckCircle2 className="w-12 h-12 text-emerald-500/50 mb-4" />
-            <p className="text-muted-foreground">
-              Queue is clear — next batch arrives tomorrow at 8am
-            </p>
-          </div>
+          <EmptyState />
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.map((p) => (
