@@ -7,6 +7,7 @@ const navItems = [
   { to: "/contacts", label: "Contacts", icon: Users },
   { to: "/command-center", label: "Command Center", icon: Command },
   { to: "/whatsapp", label: "WhatsApp", icon: MessageCircle },
+  { to: "/prospects", label: "Prospects", icon: UserSearch },
   { to: "/import", label: "Import", icon: Upload },
 ];
 
